@@ -5,21 +5,42 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title th:text="${basepath}"></title>
+    <link rel="stylesheet" href="tingle/tingle.min.css">
+    <link rel="stylesheet" href="monaco-editor-0.40.0/min/vs/editor/editor.main.css">
+    <style>
+        .custom-class .tingle-modal-box__content {
+            padding: 2px 0;
+        }
+        .custom-class .editor {
+            height: 60vh;
+        }
+    </style>
 </head>
 <body>
 
-    <h1 th:if="${isRoot}">Root</h1>
-    <h1 th:unless="${isRoot}">
-        <a th:href="${'?path=' + parentPath}">..</a>
-    </h1>
+    <h1>Index of <span th:text="${basepath}"></span></h1>
+    
+    <hr>
+
+    <a th:unless="${isRoot}" th:href="${'?path=' + parentPath}">../</a>
+
     <div th:each="file: ${fileList}" style="display: flex;">
+        <div style="width: 400px;">
+            <a th:if="${file.getFile().isDirectory()}" th:text="${file.getFilename() + (file.getFile().isDirectory() ? '/' : '')}"  th:href="${'?path=' + basepath + file.getFilename()}"></a>
+            <span th:unless="${file.getFile().isDirectory()}" th:text="${file.getFilename()}" onclick="showModal()"></span>
+        </div>
+        <div style="width: 200px;" th:text="${#dates.format(file.lastModified, 'yyyy-MM-dd HH:mm:ss')}"></div>
 
-        <a th:text="${file.getFilename() + (file.getFile().isDirectory() ? '/' : '')}"  th:href="${'?path=' + basepath + file.getFilename()}">文件夹</a>
     </div>
+    <hr>
 
+    <script>var require = { paths: { vs: './monaco-editor-0.40.0/min/vs' } };</script>
+    <script src="tingle/tingle.min.js"></script>
+
+    <script src="monaco-editor-0.40.0/min/vs/loader.js"></script>
+	<script src="monaco-editor-0.40.0/min/vs/editor/editor.main.nls.js"></script>
+	<script src="monaco-editor-0.40.0/min/vs/editor/editor.main.js"></script>
     <script src="play/main.js"></script>
-
-
 </body>
 </html>
