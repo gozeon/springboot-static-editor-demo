@@ -15,6 +15,24 @@ const getLanguage = ext => {
     return getLanguage('.txt')
 }
 
+const saveFile = () => {
+    const url = `/play/file?path=${file.path}`
+
+    fetch(url, {
+        method: "POST",
+        body: editor.getValue()
+    }).then(response => {
+        if (response.ok) {
+            modal.close()
+        } else {
+            throw new Error('save error!')
+        }
+    }).catch(e => {
+        console.log(e)
+        alert('error!')
+    })
+}
+
 var modal = new tingle.modal({
     footer: false,
     stickyFooter: false,
@@ -27,8 +45,12 @@ var modal = new tingle.modal({
             automaticLayout: true
         });
 
-        document.querySelector('.tingle-btn.tingle-btn--primary').addEventListener('click', () => {
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
+            saveFile()
+        });
 
+        document.querySelector('.tingle-btn.tingle-btn--primary').addEventListener('click', () => {
+            saveFile()
         })
         document.querySelector('.tingle-btn.tingle-btn--default').addEventListener('click', () => {
             modal.close()
@@ -53,7 +75,8 @@ modal.setContent(`
     </div>`);
 
 document.querySelectorAll('span').forEach(el => el.addEventListener('click', function (e) {
-    fetch(`/play/file?path=${el.getAttribute('data-file')}`).then(response => {
+    const url = `/play/file?path=${el.getAttribute('data-file')}`
+    fetch(url).then(response => {
         if (response.ok) {
             return response.json()
         } else {

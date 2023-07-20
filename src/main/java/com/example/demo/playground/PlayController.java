@@ -9,11 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,5 +95,21 @@ public class PlayController {
         map.put("extension", path.substring(path.lastIndexOf(".")));
 
         return this.generateResponse("ok", HttpStatus.OK, map);
+    }
+
+    @PostMapping("file")
+    @ResponseBody
+    public ResponseEntity<Object> updateFileInfo(@RequestBody String content, @RequestParam(name = "path") String path)
+            throws IOException {
+        Resource resource = new ClassPathResource(path);
+        if (!resource.exists()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        File file = resource.getFile();
+        FileWriter fileWriter = new FileWriter(file, false);
+        fileWriter.write(content);
+        fileWriter.close();
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
