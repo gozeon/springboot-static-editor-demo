@@ -9,11 +9,30 @@
     <link rel="stylesheet" href="tingle/tingle.min.css">
     <link rel="stylesheet" href="monaco-editor-0.40.0/min/vs/editor/editor.main.css">
     <style>
-        .custom-class .tingle-modal-box__content {
+        .tingle-modal.custom-class .tingle-modal-box__content {
             padding: 2px 0;
+            height: 100%;
         }
-        .custom-class .editor {
-            height: 60vh;
+        .tingle-modal.custom-class .content {
+            display: flex;
+        }
+        .tingle-modal.custom-class .content .buttons {
+            width: 200px;
+        }
+        .tingle-modal.custom-class .content .buttons button {
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+        .tingle-modal.custom-class .content .editor {
+            flex: 1;
+            height:  100vh;
+        }
+        .tingle-modal.tingle-modal--fullscreen {
+            padding: 0;
+        }
+        .tingle-modal.tingle-modal--fullscreen .tingle-modal-box {
+            width: 100vw;
+            height: 100vh;
         }
     </style>
 </head>
@@ -28,13 +47,12 @@
     <div th:each="file: ${fileList}" style="display: flex;">
         <div style="width: 400px;">
             <a th:if="${file.getFile().isDirectory()}" th:text="${file.getFilename() + (file.getFile().isDirectory() ? '/' : '')}"  th:href="${'?path=' + basepath + file.getFilename()}"></a>
-            <span th:unless="${file.getFile().isDirectory()}" th:text="${file.getFilename()}" onclick="showModal()"></span>
+            <span th:unless="${file.getFile().isDirectory()}" th:text="${file.getFilename()}" th:data-file="${basepath + file.getFilename()}"></span>
         </div>
         <div style="width: 200px;" th:text="${#dates.format(file.lastModified, 'yyyy-MM-dd HH:mm:ss')}"></div>
 
     </div>
     <hr>
-
     <script>var require = { paths: { vs: './monaco-editor-0.40.0/min/vs' } };</script>
     <script src="tingle/tingle.min.js"></script>
 
